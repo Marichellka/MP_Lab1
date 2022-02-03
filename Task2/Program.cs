@@ -84,41 +84,35 @@ namespace Task2
                         }
 
                         newWord:
-                        if (length != words.Length)
+                        if (length == words.Length)
                         {
-                            words[length] = word;
-                            counts[length] = 1;
-                            pages[length] = new int[] { currentPage };
-                            length++;
-                            /*if (j==str.Length-1)???
-                                    goto ???;*/
+                            string[] newWords = new string[length * 2];
+                            int[] newCounts = new int[length * 2];
+                            int[][] newPages = new int[length * 2][];
 
-                            goto For1;
-                        }
-
-                        string[] newWords = new string[length * 2];
-                        int[] newCounts = new int[length * 2];
-                        int[][] newPages = new int[length * 2][];
-
-                        i = 0;
-                        forCopy:
-                        {
-                            if (i == length)
-                                goto endCopy;
-                            newWords[i] = words[i];
-                            newCounts[i] = counts[i];
-                            newPages[i] = pages[i];
-                            i++;
-                            goto forCopy;
+                            i = 0;
+                            forCopy:
+                            {
+                                if (i == length)
+                                {
+                                    words = newWords;
+                                    counts = newCounts;
+                                    pages = newPages;
+                                    goto endCopy;
+                                }
+                                newWords[i] = words[i];
+                                newCounts[i] = counts[i];
+                                newPages[i] = pages[i];
+                                i++;
+                                goto forCopy;
+                            }
                         }
 
                         endCopy:
-                        newWords[length] = word;
-                        newCounts[length] = 1;
-                        newPages[length] = new int[] { currentPage };
-                        words = newWords;
-                        counts = newCounts;
-                        pages = newPages;
+                        words[length] = word;
+                        counts[length] = 1;
+                        pages[length] = new int[] { currentPage };
+                        length++;
                         word = "";
                         length++;
                     }
@@ -142,7 +136,18 @@ namespace Task2
             i = 0;
             write:
             {
-                writer.WriteLine(words[i] + " - " + counts[i]);
+                writer.Write(words[i] + " - " );
+                int j = 0;
+                outPages:
+                {
+                    if (j == counts[i] - 1)
+                        goto endOutPages;
+                    writer.Write(pages[i][j] + ", ");
+                    j++;
+                    goto outPages;
+                }
+                endOutPages:
+                writer.WriteLine(pages[i][counts[i]-1]);
                 i++;
                 if (i < length)
                     goto write;
