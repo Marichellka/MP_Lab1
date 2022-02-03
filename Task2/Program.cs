@@ -33,18 +33,20 @@ namespace Task2
                 int j = 0;
                 For1:
                 {
+                    if (j == str.Length)
+                        goto endFor;
                     char symbol = str[j];
                     if ('Z' >= symbol && symbol >= 'A')
                     {
                         word += ((char)(symbol + 32)).ToString();
-                        if (!reader.EndOfStream)
-                            goto For1;
+                        if (j + 1 < str.Length)
+                            goto endFor;
                     }
                     else if ('z' >= symbol && symbol >= 'a')
                     {
                         word += symbol;
-                        if (!reader.EndOfStream)
-                            goto For1;
+                        if (j + 1 < str.Length)
+                            goto endFor;
                     }
 
                     if (word != "")
@@ -56,6 +58,10 @@ namespace Task2
                                 goto newWord;
                             if (word == words[i])
                             {
+                                if (counts[i] == 100)
+                                {
+                                    goto endFor;
+                                }
                                 counts[i]++;
                                 word = "";
                                 if (counts[i] <= pages[i].Length)
@@ -65,19 +71,18 @@ namespace Task2
                                 else
                                 {
                                     int[] pagesTmp = new int[counts[i] * 2];
-                                    int k = 0;
+                                    int p = 0;
                                     copyPages:
                                     {
-                                        pagesTmp[k] = pages[i][k];
-                                        k++;
-                                        if (k < counts[i])
+                                        pagesTmp[p] = pages[i][p];
+                                        p++;
+                                        if (p < counts[i] - 1)
                                             goto copyPages;
                                     }
+                                    pages[i] = pagesTmp;
+                                    pages[i][counts[i] - 1] = currentPage;
                                 }
-                                /*if (j==str.Length-1)???
-                                    goto ???;*/
-
-                                goto For1;
+                                goto endFor;
                             }
                             i++;
                             goto checkWords;
@@ -86,9 +91,9 @@ namespace Task2
                         newWord:
                         if (length == words.Length)
                         {
-                            string[] newWords = new string[length * 2];
-                            int[] newCounts = new int[length * 2];
-                            int[][] newPages = new int[length * 2][];
+                            string[] newWords = new string[(length + 1) * 2];
+                            int[] newCounts = new int[(length + 1) * 2];
+                            int[][] newPages = new int[(length + 1) * 2][];
 
                             i = 0;
                             forCopy:
@@ -114,13 +119,13 @@ namespace Task2
                         pages[length] = new int[] { currentPage };
                         length++;
                         word = "";
-                        length++;
                     }
 
-                    if(j!=str.Length-1)
+                    endFor:
+                    j++;
+                    if(j < str.Length)
                         goto For1;
                 }
-                
 
                 if (!reader.EndOfStream)
                     goto readFile;
@@ -129,6 +134,7 @@ namespace Task2
             endReading:
             reader.Close();
 
+            //Print(words);
             //sorting
             int curr, k;
             int[] currPages;
@@ -143,29 +149,27 @@ namespace Task2
                 {
                     if (k >= 0)
                     {
-                        bool isSmaller = false;
                         int symb = 0;
                         compWords:
                         {
-                            if (symb == word.Length || words[k][symb] < word[symb])
-                                goto whileSort;
+                            if (symb == words[k].Length || words[k][symb] < word[symb])
+                                goto endWhile;
 
-                            symb++;
-                            if (symb < words[k].Length && words[k][symb] == word[symb])
+                            if (symb + 1 < word.Length && words[k][symb] == word[symb])
+                            {
+                                symb++;
                                 goto compWords;
+                            }
                         }
 
-                        if (isSmaller)
-                        {
-                            counts[k + 1] = counts[k];
-                            words[k + 1] = words[k];
-                            pages[k + 1] = pages[k];
-                            k--;
-                        }
+                        counts[k + 1] = counts[k];
+                        words[k + 1] = words[k];
+                        pages[k + 1] = pages[k];
+                        k--;
                         goto whileSort;
                     }
                 }
-
+                endWhile:
                 counts[k + 1] = curr;
                 words[k + 1] = word;
                 pages[k + 1] = currPages;
@@ -179,24 +183,36 @@ namespace Task2
             i = 0;
             write:
             {
-                writer.Write(words[i] + " - " );
-                int j = 0;
-                outPages:
-                {
-                    if (j == counts[i] - 1)
-                        goto endOutPages;
-                    writer.Write(pages[i][j] + ", ");
-                    j++;
-                    goto outPages;
+                if (counts[i] < 100) {
+                    writer.Write(words[i] + " - " + pages[i][0]);
+                    int j = 1;
+                    outPages:
+                    {
+                        if (j == counts[i])
+                            goto endOutPages;
+                        if(pages[i][j] != pages[i][j - 1]) 
+                            writer.Write(", "+pages[i][j]);
+                        j++;
+                        goto outPages;
+                    }
+                    endOutPages:
+                    writer.WriteLine();
                 }
-                endOutPages:
-                writer.WriteLine(pages[i][counts[i]-1]);
                 i++;
                 if (i < length)
                     goto write;
             }
 
             writer.Close();
+        }
+
+        public static void Print(string[] words)
+        {
+            for (int i = 0; i < words.Length; i++)
+            {
+                Console.Write(words[i] + " ");
+            }
+            Console.WriteLine();
         }
     }
 }
