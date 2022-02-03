@@ -130,6 +130,49 @@ namespace Task2
             reader.Close();
 
             //sorting
+            int curr, k;
+            int[] currPages;
+            i = 1;
+            sort:
+            {
+                curr = counts[i];
+                word = words[i];
+                currPages = pages[i];
+                k = i - 1;
+                whileSort:
+                {
+                    if (k >= 0)
+                    {
+                        bool isSmaller = false;
+                        int symb = 0;
+                        compWords:
+                        {
+                            if (symb == word.Length || words[k][symb] < word[symb])
+                                goto whileSort;
+
+                            symb++;
+                            if (symb < words[k].Length && words[k][symb] == word[symb])
+                                goto compWords;
+                        }
+
+                        if (isSmaller)
+                        {
+                            counts[k + 1] = counts[k];
+                            words[k + 1] = words[k];
+                            pages[k + 1] = pages[k];
+                            k--;
+                        }
+                        goto whileSort;
+                    }
+                }
+
+                counts[k + 1] = curr;
+                words[k + 1] = word;
+                pages[k + 1] = currPages;
+                i++;
+                if (i < length)
+                    goto sort;
+            }
 
             //output
             StreamWriter writer = new StreamWriter(outPath);
