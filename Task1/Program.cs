@@ -18,100 +18,76 @@ namespace task1
             string word = "";
             StreamReader reader = new StreamReader(inPath);
             For1:
+            {
                 if (reader.EndOfStream)
-                {
-                    if (word != "")
-                    {
-                        i = 0;
-                        checkWords:
-                            if (i == length)
-                                goto newWord;
-                            if (word == words[i])
-                            {
-                                counts[i]++;
-                                word = "";
-                                goto endReading;
-                            }
-                            i++;
-
-                            goto checkWords;
-
-                    newWord:
-                        string[] newWords = new string[length + 1];
-                        int[] newCounts = new int[length + 1];
-
-                        i = 0;
-                    forCopy:
-                        if (i == length)
-                            goto endCopy;
-                        newWords[i] = words[i];
-                        newCounts[i] = counts[i];
-                        i++;
-                        goto forCopy;
-
-                    endCopy:
-                        newWords[length] = word;
-                        newCounts[length] = 1;
-                        words = newWords;
-                        counts = newCounts;
-                        word = "";
-                        length++;
-                    }
                     goto endReading;
-                }
-                    
                 char symbol = (char)reader.Read();
                 if ('Z' >= symbol && symbol >= 'A')
                 {
                     word += ((char)(symbol + 32)).ToString();
+                    if (!reader.EndOfStream)
+                        goto For1;
                 }
                 else if ('z' >= symbol && symbol >= 'a')
                 {
                     word += symbol;
+                    if (!reader.EndOfStream)
+                        goto For1;
                 }
-                else if (word != "")
+                
+                if (word != "")
                 {
                     i = 0;
                     checkWords:
+                    {
                         if (i == length)
                             goto newWord;
                         if (word == words[i])
                         {
                             counts[i]++;
                             word = "";
+                            if (reader.EndOfStream)
+                                goto endReading;
                             goto For1;
                         }
                         i++;
-
                         goto checkWords;
+                    }
 
                     newWord:
-                        string[] newWords = new string[length + 1];
-                        int[] newCounts = new int[length + 1];
+                    string[] newWords = new string[length + 1];
+                    int[] newCounts = new int[length + 1];
 
-                        i = 0;
+                    i = 0;
                     forCopy:
+                    {
                         if (i == length)
                             goto endCopy;
                         newWords[i] = words[i];
                         newCounts[i] = counts[i];
                         i++;
                         goto forCopy;
-
+                    }
+                    
                     endCopy:
-                        newWords[length] = word;
-                        newCounts[length] = 1;
-                        words = newWords;
-                        counts = newCounts;
-                        word = "";
-                        length++;
+                    newWords[length] = word;
+                    newCounts[length] = 1;
+                    words = newWords;
+                    counts = newCounts;
+                    word = "";
+                    length++;
                 }
 
-            goto For1;
+                if(!reader.EndOfStream)
+                    goto For1;
+            }
 
             endReading:
             reader.Close();
 
+            Print(words);
+
+            Print(counts);
             //sorting
             int  curr, k;
             i = 1;
@@ -122,13 +98,15 @@ namespace task1
                 k = i - 1;
                 whileSort:
                 {
-                    if (i < 0 || counts[i] > curr)
-                        goto endWhile;
-                    counts[k + 1] = counts[k];
-                    words[k + 1] = words[k];
-                    k--;
+                    if (k >= 0 && counts[k] < curr)
+                    {
+                        counts[k + 1] = counts[k];
+                        words[k + 1] = words[k];
+                        k--;
+                        goto whileSort;
+                    }
                 }
-                endWhile:
+                
                 counts[k + 1] = curr;
                 words[k + 1] = word;
                 i++;
@@ -136,6 +114,8 @@ namespace task1
                     goto sort;
             }
 
+            Print(words);
+            Print(counts);
             //output
             StreamWriter writer = new StreamWriter(outPath);
             i = 0;
@@ -155,6 +135,14 @@ namespace task1
             for (int i = 0; i < words.Length; i++)
             {
                 Console.Write(words[i]+" ");
+            }
+            Console.WriteLine();
+        }
+        static public void Print(int[] words)
+        {
+            for (int i = 0; i < words.Length; i++)
+            {
+                Console.Write(words[i] + " ");
             }
             Console.WriteLine();
         }
