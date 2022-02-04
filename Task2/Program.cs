@@ -38,7 +38,7 @@ namespace Task2
                     char symbol = str[j];
                     if ('Z' >= symbol && symbol >= 'A')
                     {
-                        word += ((char)(symbol + 32)).ToString();
+                        word += ((char)(symbol + 32));
                         if (j + 1 < str.Length)
                             goto endFor;
                     }
@@ -58,12 +58,12 @@ namespace Task2
                                 goto newWord;
                             if (word == words[i])
                             {
+                                word = "";
                                 if (counts[i] == 100)
                                 {
                                     goto endFor;
                                 }
                                 counts[i]++;
-                                word = "";
                                 if (counts[i] <= pages[i].Length)
                                 {
                                     pages[i][counts[i] - 1] = currentPage;
@@ -204,15 +204,6 @@ namespace Task2
             }
 
             writer.Close();
-        }
-
-        public static void Print(string[] words)
-        {
-            for (int i = 0; i < words.Length; i++)
-            {
-                Console.Write(words[i] + " ");
-            }
-            Console.WriteLine();
         }
     }
 }
