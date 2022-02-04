@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace task1
@@ -36,7 +36,7 @@ namespace task1
                         goto For1;
                 }
                 
-                if (word != "")
+                if (word != "" && symbol!='-' && symbol!='\'')
                 {
                     i = 0;
                     checkStopWords:

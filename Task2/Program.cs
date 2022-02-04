@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Task2
@@ -49,7 +49,7 @@ namespace Task2
                             goto endFor;
                     }
 
-                    if (word != "")
+                    if (word != "" && symbol != '-' && symbol != '\'')
                     {
                         i = 0;
                         checkWords:
