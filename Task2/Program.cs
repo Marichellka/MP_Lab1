@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 namespace Task2
@@ -52,24 +52,25 @@ namespace Task2
                     if (word != "" && symbol != '-' && symbol != '\'')
                     {
                         i = 0;
-                        checkWords:
+                        checkWords: //check if it's new word
                         {
                             if (i == length)
                                 goto newWord;
-                            if (word == words[i])
+                            if (word == words[i]) //it isn't new word
                             {
                                 word = "";
-                                if (counts[i] == 100)
+                                if (counts[i] > 100) //word is ignored
                                 {
                                     goto endFor;
                                 }
                                 counts[i]++;
-                                if (counts[i] <= pages[i].Length)
+                                if (counts[i] <= pages[i].Length) //is array enough for new page
                                 {
                                     pages[i][counts[i] - 1] = currentPage;
                                 }
                                 else
                                 {
+                                    //increase pages[i] array
                                     int[] pagesTmp = new int[counts[i] * 2];
                                     int p = 0;
                                     copyPages:
@@ -88,7 +89,7 @@ namespace Task2
                             goto checkWords;
                         }
 
-                        newWord:
+                        newWord: //it`s new word
                         if (length == words.Length)
                         {
                             string[] newWords = new string[(length + 1) * 2];
@@ -134,8 +135,7 @@ namespace Task2
             endReading:
             reader.Close();
 
-            //Print(words);
-            //sorting
+            //sorting (insertion sort)
             int curr, k;
             int[] currPages;
             i = 1;
@@ -150,7 +150,7 @@ namespace Task2
                     if (k >= 0)
                     {
                         int symb = 0;
-                        compWords:
+                        compWords: //compare words
                         {
                             if (symb == words[k].Length || words[k][symb] < word[symb])
                                 goto endWhile;
@@ -183,14 +183,14 @@ namespace Task2
             i = 0;
             write:
             {
-                if (counts[i] < 100) {
+                if (counts[i] <= 100) { //if word isn`t igrnored
                     writer.Write(words[i] + " - " + pages[i][0]);
                     int j = 1;
                     outPages:
                     {
                         if (j == counts[i])
                             goto endOutPages;
-                        if(pages[i][j] != pages[i][j - 1]) 
+                        if(pages[i][j] != pages[i][j - 1]) // it`s new page
                             writer.Write(", "+pages[i][j]);
                         j++;
                         goto outPages;
@@ -207,3 +207,5 @@ namespace Task2
         }
     }
 }
+
+

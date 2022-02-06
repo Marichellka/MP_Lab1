@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.IO;
 
-namespace task1
+namespace Task1
 {
     class Program
     {
@@ -16,6 +16,8 @@ namespace task1
             int length = 0, i;
             int maxWordsCount = 25;
             string word = "";
+
+            //reading
             StreamReader reader = new StreamReader(inPath);
             For1:
             {
@@ -23,6 +25,7 @@ namespace task1
                     goto endReading;
 
                 char symbol = (char)reader.Read();
+
                 if ('Z' >= symbol && symbol >= 'A')
                 {
                     word += ((char)(symbol + 32)).ToString();
@@ -39,7 +42,7 @@ namespace task1
                 if (word != "" && symbol!='-' && symbol!='\'')
                 {
                     i = 0;
-                    checkStopWords:
+                    checkStopWords: //check if it`s a stop wor
                     {
                         if (word == stopWords[i])
                         {
@@ -54,7 +57,7 @@ namespace task1
                     }
 
                     i = 0;
-                    checkWords:
+                    checkWords: //check if it`s a new word
                     {
                         if (i == length)
                             goto newWord;
@@ -70,7 +73,7 @@ namespace task1
                         goto checkWords;
                     }
 
-                    newWord:
+                    newWord: //it`s new word
                     if (length == words.Length)
                     {
 
@@ -108,7 +111,7 @@ namespace task1
             endReading:
             reader.Close();
 
-            //sorting
+            //sorting (insertion sort)
             int  curr, k;
             i = 1;
             sort:
